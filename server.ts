@@ -113,9 +113,21 @@ async function startServer() {
     });
   });
 
+  // Simple in-memory cache for mapping predictions
+  let predictionsCache: any = null;
+  let cacheTimestamp: number = 0;
+  const CACHE_TTL = 30 * 1000; // 30 seconds
+
   // Fetch Predictions (Security: betCode is NEVER returned here)
   app.get("/api/predictions", apiLimiter, async (req, res) => {
     if (!supabase) return res.status(503).json({ error: "Storage service unavailable" });
+
+    // Performance: Return cached data if valid
+    const now = Date.now();
+    if (predictionsCache && (now - cacheTimestamp < CACHE_TTL)) {
+      res.setHeader('X-Cache', 'HIT');
+      return res.json(predictionsCache);
+    }
 
     try {
       const { data, error } = await supabase
@@ -125,8 +137,6 @@ async function startServer() {
 
       if (error) throw error;
 
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-      
       const mappedData = (data || []).map((p: any) => ({
         id: p.id,
         title: p.title,
@@ -137,6 +147,12 @@ async function startServer() {
         betCode: ""
       }));
 
+      // Update cache
+      predictionsCache = mappedData;
+      cacheTimestamp = now;
+
+      res.setHeader('Cache-Control', 'public, max-age=30');
+      res.setHeader('X-Cache', 'MISS');
       res.json(mappedData);
     } catch (err: any) {
       console.error("Fetch Predictions Exception:", err.message);
@@ -238,6 +254,7 @@ async function startServer() {
         .select();
 
       if (error) throw error;
+      predictionsCache = null; // Invalidate cache
       res.json(data[0]);
     } catch (err: any) {
       res.status(500).json({ error: err.message });
@@ -262,6 +279,7 @@ async function startServer() {
         .eq("id", id);
 
       if (error) throw error;
+      predictionsCache = null; // Invalidate cache
       res.json({ success: true });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
@@ -279,6 +297,7 @@ async function startServer() {
         .eq("id", id);
 
       if (error) throw error;
+      predictionsCache = null; // Invalidate cache
       res.json({ success: true });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
@@ -296,6 +315,7 @@ async function startServer() {
         .in("id", ids);
 
       if (error) throw error;
+      predictionsCache = null; // Invalidate cache
       res.json({ success: true });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
