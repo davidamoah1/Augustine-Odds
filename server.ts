@@ -39,17 +39,26 @@ const apiLimiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per windowMs
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => {
+    return req.headers["x-forwarded-for"]?.toString() || req.ip || "unknown";
+  },
 });
 
 const loginLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 5, // Limit each IP to 5 login attempts per hour
   message: { error: "Too many login attempts. Please try again later." },
+  keyGenerator: (req) => {
+    return req.headers["x-forwarded-for"]?.toString() || req.ip || "unknown";
+  },
 });
 
 const paymentLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
   max: 20, // Limit payment verification
+  keyGenerator: (req) => {
+    return req.headers["x-forwarded-for"]?.toString() || req.ip || "unknown";
+  },
 });
 
 // Middleware for Admin Authentication
@@ -72,6 +81,10 @@ const authenticateAdmin = (req: any, res: any, next: any) => {
 
 async function startServer() {
   const app = express();
+  const PORT = 3000;
+
+  // Essential for Cloud Run / Reverse Proxies to get correct client IP
+  app.set("trust proxy", 1);
 
   // Security Headers
   app.use(helmet({
