@@ -90,7 +90,7 @@ export default function Contact() {
                 <MessageSquare size={16} />
                 <span>Get In Touch</span>
               </div>
-              <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-8 tracking-tight leading-[1.1]">
+              <h2 className="text-3xl md:text-6xl font-display font-bold text-white mb-6 md:mb-8 tracking-tight leading-[1.1]">
                 HAVE QUESTIONS? <br />
                 <span className="text-[#00a3e0] italic">TALK TO US</span>
               </h2>

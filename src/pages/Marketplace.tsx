@@ -77,14 +77,14 @@ export default function Marketplace({ isLoading, predictions, onUnlock }: Market
           <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">Precision-matched elite betting nodes</p>
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white/[0.02] border border-white/5 p-4 rounded-[32px]">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 bg-[#1a1c23] p-1.5 rounded-2xl">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 bg-white/[0.02] border border-white/5 p-4 rounded-[32px]">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full xl:w-auto">
+            <div className="flex flex-wrap items-center gap-2 bg-[#1a1c23] p-1.5 rounded-2xl w-full sm:w-auto">
               {filters.map((filter) => (
                 <button
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id)}
-                  className={`relative px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all z-10 flex items-center gap-2 ${
+                  className={`relative flex-1 sm:flex-none px-4 sm:px-5 py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all z-10 flex items-center justify-center sm:justify-start gap-2 ${
                     activeFilter === filter.id
                       ? "text-white"
                       : "text-slate-500 hover:text-slate-300"
@@ -163,7 +163,7 @@ export default function Marketplace({ isLoading, predictions, onUnlock }: Market
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-6 px-0">
         <AnimatePresence mode="popLayout">
           {isLoading ? (
             Array.from({ length: 8 }).map((_, i) => (

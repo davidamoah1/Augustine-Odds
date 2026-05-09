@@ -113,8 +113,11 @@ export default function Footer({ }: FooterProps) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
-          <p>© 2026 Augustine Odds. All rights reserved.</p>
+        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 text-center md:text-left">
+          <div>
+            <p>© 2026 Augustine Odds. All rights reserved.</p>
+            <p className="mt-2 text-[#00a3e0]/60">Developed by D&D Brothers</p>
+          </div>
           <div className="flex items-center gap-8">
             <p className="opacity-30">Designed for Champions</p>
           </div>

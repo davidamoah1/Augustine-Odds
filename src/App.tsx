@@ -62,7 +62,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#010409] text-slate-300 font-sans selection:bg-[#00a3e0] selection:text-white relative">
+    <div className="min-h-screen bg-[#010409] text-slate-300 font-sans selection:bg-[#00a3e0] selection:text-white relative overflow-x-hidden">
       <ScrollToTop />
       <div className="noise-bg absolute inset-0 z-0 pointer-events-none" />
       

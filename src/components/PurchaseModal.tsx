@@ -15,9 +15,7 @@ interface PurchaseModalProps {
 
 export default function PurchaseModal({ prediction, isOpen, onClose, onConfirm }: PurchaseModalProps) {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
+    name: "",
     phone: "",
   });
   const [isVerifying, setIsVerifying] = useState(false);
@@ -33,7 +31,7 @@ export default function PurchaseModal({ prediction, isOpen, onClose, onConfirm }
       onConfirm(prediction.id, result.betCode);
       onClose();
       // Reset form
-      setFormData({ firstName: "", lastName: "", email: "", phone: "" });
+      setFormData({ name: "", phone: "" });
     } catch (err: any) {
       console.error("Verification error:", err);
       alert(err.message || "Unable to verify payment. Please contact support.");
@@ -56,15 +54,34 @@ export default function PurchaseModal({ prediction, isOpen, onClose, onConfirm }
       return;
     }
 
+    // Paystack requires an email. We generate a dummy one from the phone number
+    // to keep the UI simple as requested.
+    const cleanPhone = formData.phone.replace(/\D/g, '');
+    const dummyEmail = `${cleanPhone || 'customer'}@augustineodds.com`;
+
     initializePayment({
       key: publicKey,
-      email: formData.email,
+      email: dummyEmail,
       amount: Math.floor(prediction.price * 100),
       currency: "GHS",
       reference: `ME_${prediction.id}_${Date.now()}`,
+      metadata: {
+        custom_fields: [
+          {
+            display_name: "Customer Name",
+            variable_name: "customer_name",
+            value: formData.name
+          },
+          {
+            display_name: "Phone Number",
+            variable_name: "phone_number",
+            value: formData.phone
+          }
+        ]
+      },
       onSuccess: handlePaymentSuccess,
       onClose: () => console.log("Payment window closed"),
-    });
+    } as any);
   };
 
   return (
@@ -84,86 +101,68 @@ export default function PurchaseModal({ prediction, isOpen, onClose, onConfirm }
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg bg-[#0d1017] border border-white/5 rounded-[40px] overflow-hidden shadow-2xl"
+            className="relative w-full max-w-lg bg-[#0d1017] border border-white/5 rounded-[32px] sm:rounded-[40px] overflow-hidden shadow-2xl"
           >
             {/* Header */}
-            <div className="p-8 pb-0 flex justify-between items-start">
+            <div className="p-6 sm:p-8 pb-0 flex justify-between items-start">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <div className="p-2 bg-[#00a3e0]/10 rounded-xl">
                     <ShieldCheck size={20} className="text-[#00a3e0]" />
                   </div>
-                  <span className="text-[10px] font-black text-[#00a3e0] uppercase tracking-[0.3em]">Secure Checkout</span>
+                  <span className="text-[10px] font-black text-[#00a3e0] uppercase tracking-[0.3em]">Direct Unlock</span>
                 </div>
-                <h2 className="text-3xl font-bold text-white tracking-tight">Purchase Access</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Checkout</h2>
               </div>
               <button 
                 onClick={onClose}
-                className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all"
+                className="p-2.5 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl sm:rounded-2xl transition-all"
               >
                 <X size={20} className="text-slate-500" />
               </button>
             </div>
 
-            <div className="p-8">
+            <div className="p-6 sm:p-8">
               {/* Prediction Summary */}
-              <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 mb-8 flex justify-between items-center group">
+              <div className="bg-white/[0.02] border border-white/5 rounded-2xl sm:rounded-3xl p-5 sm:p-6 mb-6 sm:mb-8 flex justify-between items-center group">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Asset</p>
-                  <h3 className="font-bold text-white text-xl truncate max-w-[200px] group-hover:text-[#00a3e0] transition-colors">
+                  <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Selected Odds</p>
+                  <h3 className="font-bold text-white text-lg sm:text-xl truncate max-w-[150px] sm:max-w-[200px] group-hover:text-[#00a3e0] transition-colors">
                     {prediction.title}
                   </h3>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Price</p>
-                  <div className="text-2xl font-black text-white">
+                  <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Pay Only</p>
+                  <div className="text-xl sm:text-2xl font-black text-white">
                     <span className="text-[#00a3e0] text-sm mr-1">₵</span>
                     {prediction.price}
                   </div>
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-2 gap-4">
-                  <InputGroup 
-                    label="First Name" 
-                    icon={User} 
-                    placeholder="John"
-                    value={formData.firstName}
-                    onChange={(v) => setFormData({...formData, firstName: v})}
-                  />
-                  <InputGroup 
-                    label="Last Name" 
-                    icon={User} 
-                    placeholder="Doe"
-                    value={formData.lastName}
-                    onChange={(v) => setFormData({...formData, lastName: v})}
-                  />
-                </div>
-
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
                 <InputGroup 
-                  label="Email Address" 
+                  label="Full Name" 
                   icon={User} 
-                  type="email"
-                  placeholder="john@example.com"
-                  value={formData.email}
-                  onChange={(v) => setFormData({...formData, email: v})}
+                  placeholder="Enter your name"
+                  value={formData.name}
+                  onChange={(v) => setFormData({...formData, name: v})}
                 />
 
                 <InputGroup 
-                  label="Phone Number" 
+                  label="WhatsApp / Phone Number" 
                   icon={Phone} 
                   type="tel"
-                  placeholder="0XX XXX XXXX"
+                  placeholder="e.g. 054 000 0000"
                   value={formData.phone}
                   onChange={(v) => setFormData({...formData, phone: v})}
                 />
 
-                <div className="pt-4 space-y-4">
+                <div className="pt-2 sm:pt-4 space-y-4">
                   <button
                     disabled={isVerifying || !isScriptLoaded}
                     className={cn(
-                      "w-full py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3",
+                      "w-full py-4 sm:py-5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3",
                       isVerifying 
                         ? "bg-slate-800 text-slate-500 cursor-not-allowed" 
                         : "bg-[#00a3e0] text-white hover:bg-[#00b7f0] shadow-xl shadow-[#00a3e0]/10 active:scale-[0.98]"
@@ -172,19 +171,19 @@ export default function PurchaseModal({ prediction, isOpen, onClose, onConfirm }
                     {isVerifying ? (
                       <>
                         <Loader2 className="animate-spin" size={20} />
-                        <span>Verifying...</span>
+                        <span>Verifying Access...</span>
                       </>
                     ) : (
                       <>
                         <ShieldCheck size={20} />
-                        <span>Proceed to Pay</span>
+                        <span>Unlock Now</span>
                       </>
                     )}
                   </button>
                   
-                  <div className="flex items-center gap-4 py-2">
+                  <div className="flex items-center gap-4 py-1 sm:py-2">
                     <div className="h-px flex-1 bg-white/5" />
-                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">or</span>
+                    <span className="text-[9px] font-bold text-slate-700 uppercase tracking-widest">Support Access</span>
                     <div className="h-px flex-1 bg-white/5" />
                   </div>
 
@@ -192,25 +191,25 @@ export default function PurchaseModal({ prediction, isOpen, onClose, onConfirm }
                     href="https://wa.me/233546715941"
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full py-4 rounded-2xl bg-[#25D366]/10 text-[#25D366] font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#25D366]/20 transition-all"
+                    className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-[#25D366]/5 text-[#25D366] font-bold text-[9px] sm:text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#25D366]/10 transition-all border border-[#25D366]/10"
                   >
                     <MessageCircle size={16} />
-                    Chat on WhatsApp for Support
+                    WhatsApp Support
                   </a>
                 </div>
               </form>
             </div>
             
-            <div className="bg-white/[0.01] border-t border-white/5 p-6 text-center">
-              <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest leading-relaxed">
-                Secured by Paystack Standard Encryption <br />
-                Instant unlock upon successful transaction
+            <div className="bg-white/[0.01] border-t border-white/5 p-5 sm:p-6 text-center">
+              <p className="text-[8px] sm:text-[9px] text-slate-700 font-bold uppercase tracking-widest leading-relaxed">
+                Secured by Paystack &bull; Instant Code Delivery
               </p>
             </div>
           </motion.div>
         </div>
       )}
     </AnimatePresence>
+
   );
 }
 

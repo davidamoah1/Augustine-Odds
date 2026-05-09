@@ -21,64 +21,14 @@ export default function Home({ stats, recentWins, predictions, isLoading, onUnlo
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <header className="max-w-6xl mb-32 relative">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-[#00a3e0]/5 blur-[120px] rounded-full pointer-events-none"
-        />
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <div className="inline-flex items-center gap-2 bg-white/[0.03] border border-white/10 px-4 py-2 rounded-full mb-8 backdrop-blur-md">
-            <div className="w-2 h-2 bg-[#00a3e0] rounded-full animate-pulse shadow-[0_0_10px_rgba(0,163,224,0.5)]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Augustine Odds &bull; Elite Analysis Active</span>
-          </div>
-          
-          <h1 className="text-[14vw] md:text-[8vw] lg:text-[7vw] font-display font-black leading-[0.82] tracking-tighter mb-10 text-white uppercase italic">
-            AUGUSTINE<br />
-            <span className="text-[#00a3e0] not-italic">ODDS</span>
-          </h1>
-          
-          <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-16">
-            <p className="text-lg md:text-xl text-slate-400 max-w-sm leading-relaxed border-l-2 border-[#00a3e0]/30 pl-6">
-              Redefining football analytics with high-precision booking codes and data-driven insights. 
-              Experience the definitive winning edge.
-            </p>
-            
-            <div className="flex flex-wrap gap-4">
-              <button 
-                onClick={() => {
-                  const element = document.getElementById('vault');
-                  element?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="bg-[#00a3e0] hover:bg-[#00b7f0] text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl shadow-[#00a3e0]/10 flex items-center gap-3 transition-all active:scale-95 group"
-              >
-                Enter Access Vault
-                <Database size={20} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-              <Link 
-                to="/marketplace"
-                className="bg-white/5 hover:bg-white/10 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm flex items-center gap-3 transition-all active:scale-95 border border-white/5"
-              >
-                Full Archive
-                <ArrowRight size={20} />
-              </Link>
-            </div>
-          </div>
-        </motion.div>
-      </header>
-
-      <section id="vault" className="mb-32 scroll-mt-24">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
+      <section id="vault" className="mb-20 sm:mb-32 scroll-mt-24 pt-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-8">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#00a3e0]/10 border border-[#00a3e0]/20 rounded-lg mb-4">
               <span className="w-1.5 h-1.5 bg-[#00a3e0] rounded-full animate-pulse" />
               <span className="text-[10px] font-black text-[#00a3e0] uppercase tracking-widest">Live Terminal</span>
             </div>
-            <h2 className="text-5xl md:text-6xl font-display font-black text-white uppercase tracking-tighter leading-none">
+            <h2 className="text-4xl md:text-6xl font-display font-black text-white uppercase tracking-tighter leading-none">
               ACCESS<br />VAULT
             </h2>
           </div>
@@ -90,14 +40,14 @@ export default function Home({ stats, recentWins, predictions, isLoading, onUnlo
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((n) => (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-8">
+            {[1, 2, 3, 4].map((n) => (
               <PredictionCardSkeleton key={n} />
             ))}
           </div>
         ) : predictions.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {predictions.slice(0, 6).map((prediction, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-8">
+            {predictions.slice(0, 8).map((prediction, i) => (
               <motion.div
                 key={`pred-${prediction.id}-${i}`}
                 initial={{ opacity: 0, y: 20 }}
@@ -133,6 +83,36 @@ export default function Home({ stats, recentWins, predictions, isLoading, onUnlo
         )}
       </section>
 
+      <header className="max-w-6xl mb-12 sm:mb-24 md:mb-32 relative">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="absolute -top-32 -left-32 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-[#00a3e0]/5 blur-[80px] md:blur-[120px] rounded-full pointer-events-none"
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="inline-flex items-center gap-2 bg-white/[0.03] border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full mb-6 sm:mb-8 backdrop-blur-md">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#00a3e0] rounded-full animate-pulse shadow-[0_0_10px_rgba(0,163,224,0.5)]" />
+            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Augustine Odds &bull; Analysis Active</span>
+          </div>
+          
+          <h1 className="text-4xl sm:text-7xl md:text-[8vw] lg:text-[7vw] font-display font-black leading-[1.1] md:leading-[0.82] tracking-tighter mb-6 sm:mb-8 md:mb-10 text-white uppercase italic break-words">
+            AUGUSTINE<br />
+            <span className="text-[#00a3e0] not-italic">ODDS</span>
+          </h1>
+          
+          <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-16">
+            <p className="text-base sm:text-lg md:text-xl text-slate-400 max-w-sm leading-relaxed border-l-2 border-[#00a3e0]/30 pl-4 sm:pl-6">
+              Elite booking codes and data-driven insights. 
+              Get your winning edge now.
+            </p>
+          </div>
+        </motion.div>
+      </header>
+
       <section className="mb-32">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {stats.map((stat, i) => (
@@ -142,7 +122,7 @@ export default function Home({ stats, recentWins, predictions, isLoading, onUnlo
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1, duration: 0.6 }}
               viewport={{ once: true }}
-              className={`glass-card p-8 rounded-[40px] relative overflow-hidden group ${i === 0 ? "md:col-span-2" : ""}`}
+              className={`glass-card p-6 md:p-8 rounded-[32px] md:rounded-[40px] relative overflow-hidden group ${i === 0 ? "md:col-span-2" : ""}`}
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 group-hover:border-[#00a3e0]/20 transition-colors">
