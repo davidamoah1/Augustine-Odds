@@ -1,5 +1,4 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
@@ -92,7 +91,8 @@ async function startServer() {
   }));
 
   app.use(cors({
-    origin: process.env.NODE_ENV === "production" ? ["https://your-domain.com"] : true,
+    origin: true, // Allow all for now to debug Vercel deployment
+    credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE"],
   }));
   
@@ -330,12 +330,15 @@ async function startServer() {
 
   // Vite / Static Assets
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
+  } else if (process.env.VERCEL !== "1") {
+    // Only serve static files via Express if NOT on Vercel
+    // Vercel handles static assets natively and much faster
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
